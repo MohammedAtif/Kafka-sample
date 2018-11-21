@@ -13,7 +13,7 @@ import java.util.List;
 
 public class TrendDataServiceImpl implements TrendDataService {
 
-    @Value("${kafka.topic.trending}")
+    @Value("${kafka.topic.raw.trending}")
     private String TRENDING_TOPIC;
 
     @Autowired BurstDataRepository burstDataRepository;
@@ -23,12 +23,17 @@ public class TrendDataServiceImpl implements TrendDataService {
 
     @Override
     public String setTrendData(TrendingData trendData) {
-        trendProducer.send(TRENDING_TOPIC, trendData.getId());
+        trendProducer.sendRawData(TRENDING_TOPIC, trendData.getId());
         return "success";
     }
 
     @Override
     public List<TrendingData> getRawTrendingData() {
+        return trendConsumer.getRawData();
+    }
+
+    @Override
+    public List<TrendingData> getProcessedData() {
         return trendConsumer.getRawData();
     }
 

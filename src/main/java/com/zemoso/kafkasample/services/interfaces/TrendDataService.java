@@ -7,4 +7,5 @@ import java.util.List;
 public interface TrendDataService {
     String setTrendData(TrendingData trendData);
     List<TrendingData> getRawTrendingData();
+    List<TrendingData> getProcessedData();
 }

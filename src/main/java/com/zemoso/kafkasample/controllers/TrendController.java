@@ -24,4 +24,9 @@ public class TrendController {
         return trendDataService.getRawTrendingData();
     }
 
+    @GetMapping("/processed/")
+    public @ResponseBody List<TrendingData> getProcessedTrendingData() {
+        return trendDataService.getProcessedData();
+    }
+
 }

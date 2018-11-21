@@ -1,6 +1,9 @@
 package com.zemoso.kafkasample.confiuration;
 
+import com.zemoso.kafkasample.pojos.TrendingData;
 import com.zemoso.kafkasample.producer.TrendProducer;
+import com.zemoso.kafkasample.producer.TrendSerializer;
+import com.zemoso.kafkasample.utils.Constants;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.IntegerSerializer;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -20,8 +23,7 @@ public class TrendProducerConfig {
     @Value("${kafka.bootstrap-servers}")
     private String bootstrapServers;
 
-    @Bean
-    public Map<String, Object> producerConfigs() {
+    private Map<String, Object> producerConfigs() {
         Map<String, Object> props = new HashMap<>();
         // list of host:port pairs used for establishing the initial connections to the Kakfa cluster
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -30,14 +32,33 @@ public class TrendProducerConfig {
         return props;
     }
 
-    @Bean
-    public ProducerFactory<String, Integer> producerFactory() {
+    private ProducerFactory<String, Integer> producerFactory() {
         return new DefaultKafkaProducerFactory<>(producerConfigs());
     }
 
-    @Bean
+    @Bean(name = Constants.RAW_TREND_PRODUCER)
     public KafkaTemplate<String, Integer> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
+    }
+
+
+
+    private Map<String, Object> producerProcessedConfigs() {
+        Map<String, Object> props = new HashMap<>();
+        // list of host:port pairs used for establishing the initial connections to the Kakfa cluster
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, TrendSerializer.class);
+        return props;
+    }
+
+    private ProducerFactory<String, TrendingData> processedProducerFactory() {
+        return new DefaultKafkaProducerFactory<>(producerProcessedConfigs());
+    }
+
+    @Bean(name = Constants.PROCESSED_TREND_PRODUCER)
+    public KafkaTemplate<String, TrendingData> kafkaProcessedTemplate() {
+        return new KafkaTemplate<>(processedProducerFactory());
     }
 
     @Bean

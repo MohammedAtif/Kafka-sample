@@ -1,6 +1,9 @@
 package com.zemoso.kafkasample.confiuration;
 
 import com.zemoso.kafkasample.consumer.TrendConsumer;
+import com.zemoso.kafkasample.consumer.TrendDeserializer;
+import com.zemoso.kafkasample.pojos.TrendingData;
+import com.zemoso.kafkasample.utils.Constants;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.IntegerDeserializer;
@@ -27,8 +30,11 @@ public class TrendConsumerConfig {
     @Value("${kafka.bootstrap-servers}")
     private String bootstrapServers;
 
-    @Value("${kafka.topic.trending}")
+    @Value("${kafka.topic.raw.trending}")
     private String bootstrapTrendingTopic;
+
+    @Value("${kafka.topic.processed.trending}")
+    private String bootstrapProcessedTopic;
 
     @Bean
     public Map<String, Object> consumerConfigs() {
@@ -45,8 +51,8 @@ public class TrendConsumerConfig {
         return props;
     }
 
-    @Bean
-    public KafkaConsumer<String, Integer> kafkaConsumer() {
+    @Bean(name = Constants.RAW_TREND_CONSUMER)
+    public KafkaConsumer<String, Integer> rawTrendConsumer() {
         Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
@@ -54,6 +60,19 @@ public class TrendConsumerConfig {
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "trending");
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         KafkaConsumer<String, Integer> consumer = new KafkaConsumer<>(props);
+        consumer.subscribe(Collections.singleton(bootstrapTrendingTopic));
+        return consumer;
+    }
+
+    @Bean(name = Constants.PROCESSED_TREND_CONSUMER)
+    public KafkaConsumer<String, TrendingData> processedTrendConsumer() {
+        Properties props = new Properties();
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, TrendDeserializer.class);
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, "trending");
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        KafkaConsumer<String, TrendingData> consumer = new KafkaConsumer<>(props);
         consumer.subscribe(Collections.singleton(bootstrapTrendingTopic));
         return consumer;
     }
