@@ -12,9 +12,12 @@ public class TrendingData implements Serializable {
     private final static String ID = "id";
     private final static String SCORE = "score";
 
-    private final Integer id;
+    private Integer id;
 
     private int score = 1;
+
+    public TrendingData() {
+    }
 
     public TrendingData(JSONObject deserializedObject) {
         this.id = deserializedObject.optInt(ID, 0);

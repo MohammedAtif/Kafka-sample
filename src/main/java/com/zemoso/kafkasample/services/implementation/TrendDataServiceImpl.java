@@ -34,7 +34,7 @@ public class TrendDataServiceImpl implements TrendDataService {
 
     @Override
     public List<TrendingData> getProcessedData() {
-        return trendConsumer.getRawData();
+        return trendConsumer.getProcessedData();
     }
 
     public Iterable<BurstData> getBurstData() {

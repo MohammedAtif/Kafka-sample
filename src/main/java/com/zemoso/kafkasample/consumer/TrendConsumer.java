@@ -33,8 +33,17 @@ public class TrendConsumer {
     }
 
     public List<TrendingData> getProcessedData(){
-//        processedTrendConsumer.
-        return null;
+        ConsumerRecords<String, TrendingData> record = processedTrendConsumer.poll(Duration.ofMillis(100));
+        List<TrendingData> trendingData = new ArrayList<>();
+        for(ConsumerRecord<String, TrendingData> consumerRecord : record){
+            trendingData.add(consumerRecord.value());
+        }
+        return trendingData;
+    }
+
+    public boolean clearProcessedData(){
+        processedTrendConsumer.poll(Duration.ofMillis(100));
+        return true;
     }
 
 //    private CountDownLatch latch = new CountDownLatch(1);

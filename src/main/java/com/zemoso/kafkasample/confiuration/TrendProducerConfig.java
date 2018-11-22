@@ -20,13 +20,16 @@ import java.util.Map;
 @Configuration
 public class TrendProducerConfig {
 
-    @Value("${kafka.bootstrap-servers}")
-    private String bootstrapServers;
+    @Value("${kafka.raw.bootstrap-servers}")
+    private String rawDataServer;
+
+    @Value("${kafka.processed.bootstrap-servers}")
+    private String processedDataServer;
 
     private Map<String, Object> producerConfigs() {
         Map<String, Object> props = new HashMap<>();
         // list of host:port pairs used for establishing the initial connections to the Kakfa cluster
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, rawDataServer);
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, IntegerSerializer.class);
         return props;
@@ -46,7 +49,7 @@ public class TrendProducerConfig {
     private Map<String, Object> producerProcessedConfigs() {
         Map<String, Object> props = new HashMap<>();
         // list of host:port pairs used for establishing the initial connections to the Kakfa cluster
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, processedDataServer);
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, TrendSerializer.class);
         return props;

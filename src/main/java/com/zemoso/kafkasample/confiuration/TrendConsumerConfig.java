@@ -27,8 +27,11 @@ import java.util.Properties;
 @EnableKafka
 public class TrendConsumerConfig {
 
-    @Value("${kafka.bootstrap-servers}")
-    private String bootstrapServers;
+    @Value("${kafka.raw.bootstrap-servers}")
+    private String rawDataServer;
+
+    @Value("${kafka.processed.bootstrap-servers}")
+    private String processedDataServer;
 
     @Value("${kafka.topic.raw.trending}")
     private String bootstrapTrendingTopic;
@@ -40,7 +43,7 @@ public class TrendConsumerConfig {
     public Map<String, Object> consumerConfigs() {
         Map<String, Object> props = new HashMap<>();
         // list of host:port pairs used for establishing the initial connections to the Kafka cluster
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, rawDataServer);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer.class);
         // allows a pool of processes to divide the work of consuming and processing records
@@ -54,7 +57,7 @@ public class TrendConsumerConfig {
     @Bean(name = Constants.RAW_TREND_CONSUMER)
     public KafkaConsumer<String, Integer> rawTrendConsumer() {
         Properties props = new Properties();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, rawDataServer);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer.class);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "trending");
@@ -67,13 +70,13 @@ public class TrendConsumerConfig {
     @Bean(name = Constants.PROCESSED_TREND_CONSUMER)
     public KafkaConsumer<String, TrendingData> processedTrendConsumer() {
         Properties props = new Properties();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, processedDataServer);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, TrendDeserializer.class);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "trending");
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         KafkaConsumer<String, TrendingData> consumer = new KafkaConsumer<>(props);
-        consumer.subscribe(Collections.singleton(bootstrapTrendingTopic));
+        consumer.subscribe(Collections.singleton(bootstrapProcessedTopic));
         return consumer;
     }
 
