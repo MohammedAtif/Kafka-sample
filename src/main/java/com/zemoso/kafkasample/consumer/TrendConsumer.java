@@ -5,11 +5,13 @@ import com.zemoso.kafkasample.utils.Constants;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.TopicPartition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class TrendConsumer {
@@ -21,6 +23,15 @@ public class TrendConsumer {
     @Autowired
     @Qualifier(Constants.PROCESSED_TREND_CONSUMER)
     private KafkaConsumer<String, TrendingData> processedTrendConsumer;
+
+    @Autowired
+    private Comparator<TrendingData> trendingDataComparator;
+
+    private String processedDataTopic;
+
+    public TrendConsumer(String processedDataTopic) {
+        this.processedDataTopic = processedDataTopic;
+    }
 
     public List<TrendingData> getRawData(){
         List<TrendingData> trendingData = new ArrayList<>();
@@ -34,16 +45,21 @@ public class TrendConsumer {
 
     public List<TrendingData> getProcessedData(){
         ConsumerRecords<String, TrendingData> record = processedTrendConsumer.poll(Duration.ofMillis(100));
+        TopicPartition topicPartition = new TopicPartition(processedDataTopic, 0);
         List<TrendingData> trendingData = new ArrayList<>();
         for(ConsumerRecord<String, TrendingData> consumerRecord : record){
             trendingData.add(consumerRecord.value());
+        }
+        if(trendingData.size() > 0){
+            trendingData.sort(trendingDataComparator);
+            long currentPosition = processedTrendConsumer.position(topicPartition);
+            processedTrendConsumer.seek(topicPartition, currentPosition - trendingData.size());
         }
         return trendingData;
     }
 
     public boolean clearProcessedData(){
-        processedTrendConsumer.poll(Duration.ofMillis(100));
-        return true;
+        return processedTrendConsumer.poll(Duration.ofMillis(100)).count() > 0;
     }
 
 //    private CountDownLatch latch = new CountDownLatch(1);

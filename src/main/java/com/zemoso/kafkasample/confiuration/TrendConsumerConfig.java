@@ -95,7 +95,7 @@ public class TrendConsumerConfig {
 
     @Bean
     public TrendConsumer trendConsumer(){
-        return new TrendConsumer();
+        return new TrendConsumer(bootstrapProcessedTopic);
     }
 
 }
