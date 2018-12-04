@@ -10,9 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class TrendConsumer {
 
@@ -27,10 +25,11 @@ public class TrendConsumer {
     @Autowired
     private Comparator<TrendingData> trendingDataComparator;
 
-    private String processedDataTopic;
+    private TopicPartition topicPartition;
+
 
     public TrendConsumer(String processedDataTopic) {
-        this.processedDataTopic = processedDataTopic;
+        this.topicPartition = new TopicPartition(processedDataTopic, 0);
     }
 
     public List<TrendingData> getRawData(){
@@ -44,22 +43,20 @@ public class TrendConsumer {
     }
 
     public List<TrendingData> getProcessedData(){
+        System.out.println("Get Processed Data Called");
         ConsumerRecords<String, TrendingData> record = processedTrendConsumer.poll(Duration.ofMillis(100));
-        TopicPartition topicPartition = new TopicPartition(processedDataTopic, 0);
         List<TrendingData> trendingData = new ArrayList<>();
         for(ConsumerRecord<String, TrendingData> consumerRecord : record){
             trendingData.add(consumerRecord.value());
         }
         if(trendingData.size() > 0){
             trendingData.sort(trendingDataComparator);
-            long currentPosition = processedTrendConsumer.position(topicPartition);
-            processedTrendConsumer.seek(topicPartition, currentPosition - trendingData.size());
         }
         return trendingData;
     }
 
-    public boolean clearProcessedData(){
-        return processedTrendConsumer.poll(Duration.ofMillis(100)).count() > 0;
+    public void clearProcessedData(){
+        processedTrendConsumer.poll(Duration.ofMillis(100));
     }
 
 //    private CountDownLatch latch = new CountDownLatch(1);

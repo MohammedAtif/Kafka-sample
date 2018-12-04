@@ -1,4 +1,4 @@
-package com.zemoso.kafkasample.confiuration;
+package com.zemoso.kafkasample.configuration;
 
 import com.zemoso.kafkasample.consumer.TrendConsumer;
 import com.zemoso.kafkasample.consumer.TrendDeserializer;

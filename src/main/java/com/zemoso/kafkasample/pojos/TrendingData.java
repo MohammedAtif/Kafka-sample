@@ -32,8 +32,7 @@ public class TrendingData implements Serializable {
         this.score += trendingData.score;
     }
 
-    @Override
-    public String toString() {
+    public JSONObject convertToJSON(){
         JSONObject serialisedObject = new JSONObject();
         try{
             serialisedObject.put(ID, id);
@@ -41,6 +40,11 @@ public class TrendingData implements Serializable {
         }catch (JSONException e){
             e.printStackTrace();
         }
-        return serialisedObject.toString();
+        return serialisedObject;
+    }
+
+    @Override
+    public String toString() {
+        return convertToJSON().toString();
     }
 }

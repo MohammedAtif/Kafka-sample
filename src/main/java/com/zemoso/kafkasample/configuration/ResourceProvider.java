@@ -1,4 +1,4 @@
-package com.zemoso.kafkasample.confiuration;
+package com.zemoso.kafkasample.configuration;
 
 import com.zemoso.kafkasample.pojos.TrendingData;
 import org.springframework.context.annotation.Bean;

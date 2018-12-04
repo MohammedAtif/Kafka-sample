@@ -1,4 +1,4 @@
-package com.zemoso.kafkasample.confiuration;
+package com.zemoso.kafkasample.configuration;
 
 import com.zemoso.kafkasample.services.implementation.TrendDataServiceImpl;
 import com.zemoso.kafkasample.services.interfaces.TrendDataService;

@@ -5,6 +5,7 @@ import com.zemoso.kafkasample.datasource.BurstData;
 import com.zemoso.kafkasample.pojos.TrendingData;
 import com.zemoso.kafkasample.producer.TrendProducer;
 import com.zemoso.kafkasample.repositories.BurstDataRepository;
+import com.zemoso.kafkasample.repositories.TrendDataRepository;
 import com.zemoso.kafkasample.services.interfaces.TrendDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +21,7 @@ public class TrendDataServiceImpl implements TrendDataService {
 
     @Autowired private TrendProducer trendProducer;
     @Autowired private TrendConsumer trendConsumer;
+    @Autowired private TrendDataRepository trendDataRepository;
 
     @Override
     public String setTrendData(TrendingData trendData) {
@@ -34,7 +36,10 @@ public class TrendDataServiceImpl implements TrendDataService {
 
     @Override
     public List<TrendingData> getProcessedData() {
-        return trendConsumer.getProcessedData();
+//        return trendConsumer.getProcessedData();
+        List<TrendingData> trendingDataList = trendDataRepository.getTrendingDataList();
+        System.out.println("Trending Data List is : "+trendingDataList);
+        return trendingDataList;
     }
 
     public Iterable<BurstData> getBurstData() {
