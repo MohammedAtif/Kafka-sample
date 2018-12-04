@@ -2,10 +2,8 @@ package com.zemoso.kafkasample.configuration;
 
 import com.zemoso.kafkasample.consumer.TrendConsumer;
 import com.zemoso.kafkasample.pojos.TrendingData;
-import com.zemoso.kafkasample.producer.TrendProducer;
 import com.zemoso.kafkasample.repositories.TrendDataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -16,16 +14,10 @@ public class TrendCalculator {
 
     private final static long interval = 30000;
 
-    @Value("${kafka.topic.processed.trending}")
-    private String PROCESSED_TREND;
-
     private Map<Integer, TrendingData> trendMap = new HashMap<>();
 
     @Autowired
     private TrendConsumer trendConsumer;
-
-    @Autowired
-    private TrendProducer trendProducer;
 
     @Autowired
     private TrendDataRepository trendDataRepository;
@@ -46,7 +38,6 @@ public class TrendCalculator {
             }
         }
         if(trendMap.size() > 0){
-            trendConsumer.clearProcessedData();
             List<TrendingData> processedData = new ArrayList<>();
             for(Map.Entry<Integer, TrendingData> mapEntry : trendMap.entrySet()){
                 System.out.println("New trend processed : "+mapEntry.getValue());

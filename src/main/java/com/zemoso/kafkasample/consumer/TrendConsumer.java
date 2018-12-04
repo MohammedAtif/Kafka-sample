@@ -5,12 +5,13 @@ import com.zemoso.kafkasample.utils.Constants;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.TopicPartition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.time.Duration;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 public class TrendConsumer {
 
@@ -19,17 +20,9 @@ public class TrendConsumer {
     private KafkaConsumer<String, Integer> rawTrendConsumer;
 
     @Autowired
-    @Qualifier(Constants.PROCESSED_TREND_CONSUMER)
-    private KafkaConsumer<String, TrendingData> processedTrendConsumer;
-
-    @Autowired
     private Comparator<TrendingData> trendingDataComparator;
 
-    private TopicPartition topicPartition;
-
-
-    public TrendConsumer(String processedDataTopic) {
-        this.topicPartition = new TopicPartition(processedDataTopic, 0);
+    public TrendConsumer() {
     }
 
     public List<TrendingData> getRawData(){
@@ -40,23 +33,6 @@ public class TrendConsumer {
             trendingData.add(new TrendingData(record.value()));
         }
         return trendingData;
-    }
-
-    public List<TrendingData> getProcessedData(){
-        System.out.println("Get Processed Data Called");
-        ConsumerRecords<String, TrendingData> record = processedTrendConsumer.poll(Duration.ofMillis(100));
-        List<TrendingData> trendingData = new ArrayList<>();
-        for(ConsumerRecord<String, TrendingData> consumerRecord : record){
-            trendingData.add(consumerRecord.value());
-        }
-        if(trendingData.size() > 0){
-            trendingData.sort(trendingDataComparator);
-        }
-        return trendingData;
-    }
-
-    public void clearProcessedData(){
-        processedTrendConsumer.poll(Duration.ofMillis(100));
     }
 
 //    private CountDownLatch latch = new CountDownLatch(1);

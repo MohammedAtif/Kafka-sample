@@ -1,8 +1,6 @@
 package com.zemoso.kafkasample.configuration;
 
 import com.zemoso.kafkasample.consumer.TrendConsumer;
-import com.zemoso.kafkasample.consumer.TrendDeserializer;
-import com.zemoso.kafkasample.pojos.TrendingData;
 import com.zemoso.kafkasample.utils.Constants;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -30,14 +28,8 @@ public class TrendConsumerConfig {
     @Value("${kafka.raw.bootstrap-servers}")
     private String rawDataServer;
 
-    @Value("${kafka.processed.bootstrap-servers}")
-    private String processedDataServer;
-
     @Value("${kafka.topic.raw.trending}")
     private String bootstrapTrendingTopic;
-
-    @Value("${kafka.topic.processed.trending}")
-    private String bootstrapProcessedTopic;
 
     @Bean
     public Map<String, Object> consumerConfigs() {
@@ -67,19 +59,6 @@ public class TrendConsumerConfig {
         return consumer;
     }
 
-    @Bean(name = Constants.PROCESSED_TREND_CONSUMER)
-    public KafkaConsumer<String, TrendingData> processedTrendConsumer() {
-        Properties props = new Properties();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, processedDataServer);
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, TrendDeserializer.class);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, "trending");
-        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-        KafkaConsumer<String, TrendingData> consumer = new KafkaConsumer<>(props);
-        consumer.subscribe(Collections.singleton(bootstrapProcessedTopic));
-        return consumer;
-    }
-
     @Bean
     public ConsumerFactory<String, Integer> consumerFactory() {
         return new DefaultKafkaConsumerFactory<>(consumerConfigs());
@@ -95,7 +74,7 @@ public class TrendConsumerConfig {
 
     @Bean
     public TrendConsumer trendConsumer(){
-        return new TrendConsumer(bootstrapProcessedTopic);
+        return new TrendConsumer();
     }
 
 }
