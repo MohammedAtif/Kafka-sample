@@ -14,6 +14,21 @@ services:
       - mysql
       - kafka
       - redis
+  kafka:
+    image: wurstmeister/kafka
+    container_name: kafka_server
+    links:
+      - zookeeper:zk
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_ZOOKEEPER_CONNECT: zk:2181
+      KAFKA_MESSAGE_MAX_BYTES: 2000000
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - zookeeper
   mysql:
     image: mysql/mysql-server:5.7
     container_name: mysql_server_5_7
@@ -34,18 +49,3 @@ services:
     container_name: zookeeper_server
     ports:
       - "2181:2181"
-  kafka:
-    image: wurstmeister/kafka
-    container_name: kafka_server
-    links:
-      - zookeeper:zk
-    ports:
-      - "9092:9092"
-    environment:
-      KAFKA_ADVERTISED_HOST_NAME: kafka
-      KAFKA_ZOOKEEPER_CONNECT: zk:2181
-      KAFKA_MESSAGE_MAX_BYTES: 2000000
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    depends_on:
-      - zookeeper
