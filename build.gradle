@@ -40,6 +40,9 @@ sourceCompatibility = 1.8
 
 repositories {
 	mavenCentral()
+	maven {
+		url "https://plugins.gradle.org/m2/"
+	}
 }
 
 
@@ -54,7 +57,7 @@ dependencies {
 	implementation('org.springframework.boot:spring-boot-starter-integration')
 	implementation('org.springframework.boot:spring-boot-starter-jdbc')
 	implementation('org.springframework.boot:spring-boot-starter-web')
-	implementation('redis.clients:jedis:2.1.0')
+	implementation('redis.clients:jedis:2.9.0')
 	implementation('org.apache.kafka:kafka-streams')
 	implementation('org.springframework.kafka:spring-kafka')
 	implementation('org.json:json:20090211')
