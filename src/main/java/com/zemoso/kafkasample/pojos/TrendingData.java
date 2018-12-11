@@ -1,9 +1,10 @@
 package com.zemoso.kafkasample.pojos;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
-import org.json.JSONException;
-import org.json.JSONObject;
 
+import java.io.IOException;
 import java.io.Serializable;
 
 @Data
@@ -19,9 +20,11 @@ public class TrendingData implements Serializable {
     public TrendingData() {
     }
 
-    public TrendingData(JSONObject deserializedObject) {
-        this.id = deserializedObject.optInt(ID, 0);
-        this.score = deserializedObject.optInt(SCORE, 1);
+    public TrendingData(String deserializeObject) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        TrendingData data = objectMapper.readValue(deserializeObject, this.getClass());
+        this.id = data.id;
+        this.score = data.score;
     }
 
     public TrendingData(Integer id) {
@@ -32,19 +35,14 @@ public class TrendingData implements Serializable {
         this.score += trendingData.score;
     }
 
-    public JSONObject convertToJSON(){
-        JSONObject serialisedObject = new JSONObject();
-        try{
-            serialisedObject.put(ID, id);
-            serialisedObject.put(SCORE, score);
-        }catch (JSONException e){
+    @Override
+    public String toString(){
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        return serialisedObject;
-    }
-
-    @Override
-    public String toString() {
-        return convertToJSON().toString();
+        return null;
     }
 }

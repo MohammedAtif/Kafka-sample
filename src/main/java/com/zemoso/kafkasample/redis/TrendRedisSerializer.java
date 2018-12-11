@@ -1,10 +1,10 @@
 package com.zemoso.kafkasample.redis;
 
 import com.zemoso.kafkasample.pojos.TrendingData;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.SerializationException;
+
+import java.io.IOException;
 
 public class TrendRedisSerializer implements RedisSerializer<TrendingData> {
 
@@ -22,8 +22,8 @@ public class TrendRedisSerializer implements RedisSerializer<TrendingData> {
         if(bytes != null) {
             String data = new String(bytes);
             try {
-                return new TrendingData(new JSONObject(data));
-            } catch (JSONException e) {
+                return new TrendingData(data);
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
