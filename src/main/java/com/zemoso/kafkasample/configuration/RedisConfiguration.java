@@ -1,5 +1,6 @@
 package com.zemoso.kafkasample.configuration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zemoso.kafkasample.pojos.TrendingData;
 import com.zemoso.kafkasample.redis.TrendRedisSerializer;
 import com.zemoso.kafkasample.repositories.TrendDataRepository;
@@ -27,9 +28,13 @@ public class RedisConfiguration {
         return template;
     }
 
+    @Bean ObjectMapper getSerDesrObjectMapper(){
+        return new ObjectMapper();
+    }
+
     @Bean
-    public TrendRedisSerializer getRedisSerialiser(){
-        return new TrendRedisSerializer();
+    public TrendRedisSerializer getRedisSerialiser(ObjectMapper objectMapper){
+        return new TrendRedisSerializer(objectMapper);
     }
 
     @Bean
