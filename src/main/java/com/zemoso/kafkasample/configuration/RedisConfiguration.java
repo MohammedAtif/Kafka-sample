@@ -2,7 +2,7 @@ package com.zemoso.kafkasample.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zemoso.kafkasample.pojos.TrendingData;
-import com.zemoso.kafkasample.redis.TrendRedisSerializer;
+import com.zemoso.kafkasample.utils.TrendRedisSerializer;
 import com.zemoso.kafkasample.repositories.TrendDataRepository;
 import com.zemoso.kafkasample.repositories.impl.TrendDataRedisImpl;
 import org.springframework.context.annotation.Bean;

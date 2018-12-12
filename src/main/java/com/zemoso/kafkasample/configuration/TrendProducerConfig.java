@@ -1,9 +1,10 @@
 package com.zemoso.kafkasample.configuration;
 
+import com.zemoso.kafkasample.pojos.TrendingData;
 import com.zemoso.kafkasample.producer.TrendProducer;
 import com.zemoso.kafkasample.utils.Constants;
+import com.zemoso.kafkasample.utils.KafkaTrendSerializer;
 import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.common.serialization.IntegerSerializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -26,16 +27,16 @@ public class TrendProducerConfig {
         // list of host:port pairs used for establishing the initial connections to the Kakfa cluster
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, rawDataServer);
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, IntegerSerializer.class);
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaTrendSerializer.class);
         return props;
     }
 
-    private ProducerFactory<String, Integer> producerFactory() {
+    private ProducerFactory<String, TrendingData> producerFactory() {
         return new DefaultKafkaProducerFactory<>(producerConfigs());
     }
 
     @Bean(name = Constants.RAW_TREND_PRODUCER)
-    public KafkaTemplate<String, Integer> kafkaTemplate() {
+    public KafkaTemplate<String, TrendingData> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 

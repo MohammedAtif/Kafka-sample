@@ -1,4 +1,4 @@
-package com.zemoso.kafkasample.redis;
+package com.zemoso.kafkasample.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,9 +31,8 @@ public class TrendRedisSerializer implements RedisSerializer<TrendingData> {
     @Override
     public TrendingData deserialize(byte[] bytes) throws SerializationException {
         if(bytes != null) {
-            String data = new String(bytes);
             try {
-                return objectMapper.readValue(data, TrendingData.class);
+                return objectMapper.readValue(bytes, TrendingData.class);
             } catch (IOException e) {
                 e.printStackTrace();
             }

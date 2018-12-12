@@ -1,10 +1,11 @@
 package com.zemoso.kafkasample.configuration;
 
 import com.zemoso.kafkasample.consumer.TrendConsumer;
+import com.zemoso.kafkasample.pojos.TrendingData;
 import com.zemoso.kafkasample.utils.Constants;
+import com.zemoso.kafkasample.utils.KafkaTrendDeserializer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.serialization.IntegerDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -37,7 +38,7 @@ public class TrendConsumerConfig {
         // list of host:port pairs used for establishing the initial connections to the Kafka cluster
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, rawDataServer);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer.class);
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaTrendDeserializer.class);
         // allows a pool of processes to divide the work of consuming and processing records
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "trending");
         // automatically reset the offset to the earliest offset
@@ -47,26 +48,26 @@ public class TrendConsumerConfig {
     }
 
     @Bean(name = Constants.RAW_TREND_CONSUMER)
-    public KafkaConsumer<String, Integer> rawTrendConsumer() {
+    public KafkaConsumer<String, TrendingData> rawTrendConsumer() {
         Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, rawDataServer);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer.class);
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaTrendDeserializer.class);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "trending");
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-        KafkaConsumer<String, Integer> consumer = new KafkaConsumer<>(props);
+        KafkaConsumer<String, TrendingData> consumer = new KafkaConsumer<>(props);
         consumer.subscribe(Collections.singleton(bootstrapTrendingTopic));
         return consumer;
     }
 
     @Bean
-    public ConsumerFactory<String, Integer> consumerFactory() {
+    public ConsumerFactory<String, TrendingData> consumerFactory() {
         return new DefaultKafkaConsumerFactory<>(consumerConfigs());
     }
 
     @Bean
-    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, Integer>> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, Integer> factory =
+    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, TrendingData>> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, TrendingData> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         return factory;

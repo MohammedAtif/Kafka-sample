@@ -17,7 +17,7 @@ public class TrendConsumer {
 
     @Autowired
     @Qualifier(Constants.RAW_TREND_CONSUMER)
-    private KafkaConsumer<String, Integer> rawTrendConsumer;
+    private KafkaConsumer<String, TrendingData> rawTrendConsumer;
 
     @Autowired
     private Comparator<TrendingData> trendingDataComparator;
@@ -27,10 +27,10 @@ public class TrendConsumer {
 
     public List<TrendingData> getRawData(){
         List<TrendingData> trendingData = new ArrayList<>();
-        ConsumerRecords<String, Integer> records = rawTrendConsumer.poll(Duration.ofMillis(100));
-        for (ConsumerRecord<String, Integer> record : records) {
+        ConsumerRecords<String, TrendingData> records = rawTrendConsumer.poll(Duration.ofMillis(100));
+        for (ConsumerRecord<String, TrendingData> record : records) {
             System.out.println("Record received is : "+record.value());
-            trendingData.add(new TrendingData(record.value()));
+            trendingData.add(record.value());
         }
         return trendingData;
     }

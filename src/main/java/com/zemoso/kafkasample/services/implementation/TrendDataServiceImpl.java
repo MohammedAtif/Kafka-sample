@@ -25,7 +25,7 @@ public class TrendDataServiceImpl implements TrendDataService {
 
     @Override
     public String setTrendData(TrendingData trendData) {
-        trendProducer.sendRawData(TRENDING_TOPIC, trendData.getId());
+        trendProducer.sendRawData(TRENDING_TOPIC, trendData);
         return "success";
     }
 
