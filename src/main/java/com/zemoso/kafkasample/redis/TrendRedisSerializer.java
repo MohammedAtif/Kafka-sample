@@ -1,20 +1,31 @@
 package com.zemoso.kafkasample.redis;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zemoso.kafkasample.pojos.TrendingData;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.SerializationException;
 
+import java.io.IOException;
+
 public class TrendRedisSerializer implements RedisSerializer<TrendingData> {
+
+    private final ObjectMapper objectMapper;
+
+    public TrendRedisSerializer(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     @Override
     public byte[] serialize(TrendingData rawData) throws SerializationException {
         if(rawData != null) {
-            return rawData.toString().getBytes();
-        }else{
-            return null;
+            try {
+                return objectMapper.writeValueAsString(rawData).getBytes();
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
         }
+        return null;
     }
 
     @Override
@@ -22,8 +33,8 @@ public class TrendRedisSerializer implements RedisSerializer<TrendingData> {
         if(bytes != null) {
             String data = new String(bytes);
             try {
-                return new TrendingData(new JSONObject(data));
-            } catch (JSONException e) {
+                return objectMapper.readValue(data, TrendingData.class);
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
