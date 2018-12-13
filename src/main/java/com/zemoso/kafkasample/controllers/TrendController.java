@@ -5,6 +5,7 @@ import com.zemoso.kafkasample.services.interfaces.TrendDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -15,7 +16,7 @@ public class TrendController {
     private TrendDataService trendDataService;
 
     @PostMapping
-    public @ResponseBody String postNewTrendMesssage(@RequestBody TrendingData trendingBurst){
+    public @ResponseBody String postNewTrendMesssage(@Valid @RequestBody TrendingData trendingBurst){
         return trendDataService.setTrendData(trendingBurst);
     }
 

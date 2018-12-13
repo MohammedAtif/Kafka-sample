@@ -28,13 +28,9 @@ public class RedisConfiguration {
         return template;
     }
 
-    @Bean ObjectMapper getSerDesrObjectMapper(){
-        return new ObjectMapper();
-    }
-
     @Bean
-    public TrendRedisSerializer getRedisSerialiser(ObjectMapper objectMapper){
-        return new TrendRedisSerializer(objectMapper);
+    public TrendRedisSerializer getRedisSerialiser(){
+        return new TrendRedisSerializer();
     }
 
     @Bean

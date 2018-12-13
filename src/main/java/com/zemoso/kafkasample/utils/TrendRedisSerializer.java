@@ -12,8 +12,9 @@ public class TrendRedisSerializer implements RedisSerializer<TrendingData> {
 
     private final ObjectMapper objectMapper;
 
-    public TrendRedisSerializer(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
+    public TrendRedisSerializer() {
+        this.objectMapper = new ObjectMapper();
+        this.objectMapper.addMixIn(TrendingData.class, TrendingDataMixin.class);
     }
 
     @Override

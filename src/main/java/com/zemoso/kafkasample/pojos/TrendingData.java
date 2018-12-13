@@ -1,7 +1,8 @@
 package com.zemoso.kafkasample.pojos;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
+import org.hibernate.validator.constraints.Range;
 
 import java.io.Serializable;
 
@@ -16,8 +17,10 @@ public class TrendingData implements Serializable {
     }
 
     private Integer id;
-    private int score = 1;
+    private Integer score = 1;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @Range(min = 1, max = 4)
     private Integer actionType;
 
     public TrendingData() {
