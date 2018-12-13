@@ -11,7 +11,7 @@ public class ResourceProvider {
 
     @Bean
     public Comparator<TrendingData> trendingDataComparator(){
-        return (o1, o2) -> o2.getScore() - o1.getScore();
+        return Comparator.comparingInt(TrendingData::getScore);
     }
 
 }
